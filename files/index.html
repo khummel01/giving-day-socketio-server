@@ -67,13 +67,62 @@
   	document.getElementsByClassName("money-raised")[0].innerHTML = "$" + data.total.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   });
  	socket.on('update-challenges', function (data) {
+    console.log(data)
     for (var key in data) {
       var donors = data[key]['donors'];
       var percent_complete = donors * 100.0 / data[key]['challenge_donors'];
       document.getElementById(key).innerHTML = '<span class="progress-meter" style="width: ' + percent_complete + '%"><p class="progress-meter-text">' + donors + '</p></span>';
     }
-  });	
+  });
 </script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load('current', {
+    'packages':['geochart'],
+    // Note: you will need to get a mapsApiKey for your project.
+    // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+    'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+  });
+  google.charts.setOnLoadCallback(drawRegionsMap);
+
+  function drawRegionsMap() {
+
+    testData = {"AL":2,"AK":3,"AZ":8,"AR":1,"CA":19,"CO":41,"CT":3,"DE":1,"FL":8,"GA":6,
+            "HI":1,"ID":3,"IL":69,"IN":10,"IA":479,"KS":5,"KY":3,"LA":2,"ME":1,"MD":14,
+            "MA":2,"MI":7,"MN":370,"MS":1,"MO":6,"MT":5,"NE":5,"NV":1,"NH":1,"NJ":2,
+            "NM":3,"NY":9,"NC":12,"ND":6,"OH":8,"OK":1,"OR":3,"PA":4,"RI":3,"SC":2,
+            "SD":10,"TN":6,"TX":18,"UT":1,"VT":3,"VA":29,"WA":14,"WV":1,"WI":101,"WY":1}
+
+    states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
+              "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+              "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+              "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+              "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+
+    allStatesLst = [['State', 'Number of donors']];
+
+    for (item in testData) {
+      allStatesLst.push([item, testData[item]])
+    }
+
+    var data = google.visualization.arrayToDataTable(
+      allStatesLst
+    );
+
+    var options = {
+      width:556,
+      height: 347,
+      region: "US",
+      resolution: "provinces",
+      colorAxis: {colors: ["#D3D3D3", "#1a4ea3"]}
+    };
+
+    var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+    chart.draw(data, options);
+  }
+</script>
+<div id="regions_div" style="width: 900px; height: 500px;"></div>
 </body>
 </html>
-
